@@ -1,0 +1,34 @@
+procedure - Keyword
+SetDisplay - Identifier
+( - Single Delimiter
+R - Identifier
+: - Single Delimiter
+Real - Keyword
+) - Single Delimiter
+; - Single Delimiter
+var - Keyword
+S - Identifier
+string - Keyword
+[ - Single Delimiter
+63 - Decimal Number
+] - Single Delimiter
+begin - Keyword
+Str - Keyword
+0 - Decimal Number
+10 - Decimal Number
+, - Single Delimiter
+if - Keyword
+1 - Decimal Number
+<> - Double Delimiter
+'-' - String Constant
+then - Keyword
+Sign - Identifier
+:= - Double Delimiter
+'space' - String Constant
+else - Keyword
+Delete - Keyword
+end - Keyword
+Length - Keyword
+> - Single Delimiter
+15 - Decimal Number
+Error - Keyword
