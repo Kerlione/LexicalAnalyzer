@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace LexicalAnalyzer.BL.FSM
 {
-    public enum States
+    public enum State
     {
-        Letter,
-        Digit,
+        Identifier,
+        Keyword,
+        DecimalNumber,
         Delimiter,
-        ComplexDelimiter,
-        Symbol,
-        Eof,
+        DoubleDelimiter,
+        String,
+        Space,
         Error
     }
 }

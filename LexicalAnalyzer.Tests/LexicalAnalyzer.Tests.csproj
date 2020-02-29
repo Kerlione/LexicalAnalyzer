@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{4F16F513-062C-4AE7-8548-E7418BB0793B}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LexicalAnalyzer.Tests</RootNamespace>
     <AssemblyName>LexicalAnalyzer.Tests</AssemblyName>
@@ -30,6 +30,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -41,16 +44,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestData\Languages.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\LexicalAnalyzer.BL\LexicalAnalyzer.BL.csproj">
+      <Project>{83A5403B-5107-4F9F-87B6-BEE50C47FE7D}</Project>
+      <Name>LexicalAnalyzer.BL</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="TestData\AnalyzedCode.txt" />
     <Content Include="TestData\Grammar.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TestData\LexicalAnalyzer_FSM.drawio" />
-    <None Include="TestData\test_code.pas" />
+    <None Include="TestData\test_code.pas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

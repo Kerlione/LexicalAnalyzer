@@ -54,7 +54,7 @@
     <Compile Include="Helpers\FileLoader.cs" />
     <Compile Include="Language\Language.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FSM\States.cs" />
+    <Compile Include="FSM\State.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
