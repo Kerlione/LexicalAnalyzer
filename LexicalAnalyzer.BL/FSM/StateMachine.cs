@@ -63,16 +63,7 @@ namespace LexicalAnalyzer.BL.FSM
                     while (!reader.EndOfStream)
                     {
                         char currentSymbol = (char)reader.Read();
-                        Process(currentSymbol);
-                        if (!LexemEnded)
-                        {
-                            lexemBuffer += currentSymbol;
-                        }
-                        else
-                        {
-                            DetectLexem(lexemBuffer, result);
-                            lexemBuffer = "" + currentSymbol;
-                        }
+                        var res = Process(currentSymbol, reader);                        
                     }
                 }
                 return result;
@@ -90,17 +81,17 @@ namespace LexicalAnalyzer.BL.FSM
                 if (!reader.EndOfStream)
                 {
                     char character = (char)reader.Read();
-                    if (Char.IsLetter(character) || Char.IsDigit(character))
+                    while (Char.IsLetter(character) || Char.IsDigit(character))
                     {
                         if (Language.AllowedSymbols.Contains(character))
+                        {
                             identifier += character;
+                            character = (char)reader.Read();
+                        }
                         else
                             throw new InvalidDataException($"Symbol '{character}' is not allowed!");
-                    }
-                    else
-                    {
-                        return new Tuple<State, string>(State.Identifier, identifier);
-                    }
+                    }                    
+                    return new Tuple<State, string>(State.Identifier, identifier);
                 }
             }
 
@@ -110,18 +101,14 @@ namespace LexicalAnalyzer.BL.FSM
                 if (!reader.EndOfStream)
                 {
                     char character = (char)reader.Read();
-                    if (Char.IsDigit(character))
+                    while (Char.IsDigit(character))
                     {
                         if (Language.Digits.Contains(character))
                             decimalNumber += character;
                         else
                             throw new InvalidDataException($"Symbol '{character}' is not allowed!");
                     }
-                    else
-                    {
-                        return new Tuple<State, string>(State.DecimalNumber, decimalNumber);
-                    }
-
+                    return new Tuple<State, string>(State.DecimalNumber, decimalNumber);
                 }
             }
 
@@ -159,18 +146,19 @@ namespace LexicalAnalyzer.BL.FSM
             if (currentSymbol.Equals('\''))
             {
                 CurrentState = State.String;
-
-                return new Tuple<State, string>();
+                var data = "";
+                if (!reader.EndOfStream)
+                {
+                    char character = (char)reader.Read();
+                    while (!character.Equals('\''))
+                    {
+                        data += character;
+                       
+                    }
+                    return new Tuple<State, string>(State.String, data);
+                }
             }
-
-            if (Char.IsWhiteSpace(currentSymbol))
-            {
-                LexemEnded = true;
-                return;
-            }
-
-            CurrentState = State.Error;
-            Logger.Error($"Symbol: {currentSymbol} is invalid for this language definition");
+            return new Tuple<State, string>(State.Error, "" + currentSymbol);
         }
 
         private void DetectLexem(string lexem, ParsingResult result)
