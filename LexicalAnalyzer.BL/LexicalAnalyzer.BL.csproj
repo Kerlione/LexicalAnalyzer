@@ -49,6 +49,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FSM\DecompositionTableEntry.cs" />
+    <Compile Include="FSM\ParsingResult.cs" />
     <Compile Include="Helpers\LanguageDefinitionLoader.cs" />
     <Compile Include="FSM\StateMachine.cs" />
     <Compile Include="Helpers\FileLoader.cs" />

@@ -20,7 +20,7 @@ namespace LexicalAnalyzer.Tests
             Console.WriteLine($"Check if serialized and stored languages are equal: {language.Equals(loadedLanguage)}");
             var file = @"TestData\test_code.pas";
             var fsm = new StateMachine(filePath);
-            fsm.Process(file);
+            var result = fsm.Process(file);
             Console.ReadLine();
         }
     }
