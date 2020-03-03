@@ -22,7 +22,8 @@ namespace LexicalAnalyzer.BL.FSM
             }
             set
             {
-                PreviousState = CurrentState;
+                if (!CurrentState.Equals(State.Space))
+                    PreviousState = CurrentState;
                 currentState = value;
             }
         }
@@ -32,6 +33,8 @@ namespace LexicalAnalyzer.BL.FSM
         public List<string> Logs { get; set; }
 
         public Language Language { get; set; }
+
+        private bool LexemEnded { get; set; }
 
         public StateMachine()
         {
@@ -43,7 +46,7 @@ namespace LexicalAnalyzer.BL.FSM
             Language = Language.Load(languageDefinitionPath);
         }
 
-        public void Process(string filePath)
+        public ParsingResult Process(string filePath)
         {
             if (!File.Exists(filePath))
             {
@@ -52,76 +55,157 @@ namespace LexicalAnalyzer.BL.FSM
             }
             using (var file = File.OpenRead(filePath))
             {
+                var result = new ParsingResult();
                 Logger.Info($"Reading content of {filePath}");
                 using (var reader = new StreamReader(file))
                 {
-                    char currentSymbol = ' ';
                     var lexemBuffer = "";
                     while (!reader.EndOfStream)
                     {
-                        currentSymbol = (char)reader.Read();
+                        char currentSymbol = (char)reader.Read();
                         Process(currentSymbol);
-                        Console.WriteLine($"Current State: {CurrentState}. Current symbol: {currentSymbol}");
-                        if (!CurrentState.Equals(State.Space))
+                        if (!LexemEnded)
                         {
-                            Console.WriteLine($"Adding symbol: '{currentSymbol}' into lexem buffer");
                             lexemBuffer += currentSymbol;
                         }
                         else
                         {
-                            if (PreviousState.Equals(State.Identifier))
-                            {
-                                Console.WriteLine($"Lexem detected: '{lexemBuffer}'. Type: {(Language.Keywords.Any(x => String.Compare(x, lexemBuffer, true) == 0) ? State.Keyword : State.Identifier)}. ");
-                                lexemBuffer = "";
-                            }
+                            DetectLexem(lexemBuffer, result);
+                            lexemBuffer = "" + currentSymbol;
                         }
                     }
                 }
+                return result;
             }
         }
-
-        private void Process(char currentSymbol)
+        private bool CheckIfLexemEnded()
         {
-            if (Language.AllowedSymbols.Contains(currentSymbol))
+            return CurrentState.Equals(State.Delimiter) || CurrentState.Equals(State.DoubleDelimiter);
+        }
+        private Tuple<State, string> Process(char currentSymbol, StreamReader reader)
+        {
+            if (Char.IsLetter(currentSymbol))
             {
-                CurrentState = State.Identifier;
-                return;
+                var identifier = "" + currentSymbol;
+                if (!reader.EndOfStream)
+                {
+                    char character = (char)reader.Read();
+                    if (Char.IsLetter(character) || Char.IsDigit(character))
+                    {
+                        if (Language.AllowedSymbols.Contains(character))
+                            identifier += character;
+                        else
+                            throw new InvalidDataException($"Symbol '{character}' is not allowed!");
+                    }
+                    else
+                    {
+                        return new Tuple<State, string>(State.Identifier, identifier);
+                    }
+                }
             }
 
-            if (Language.Digits.Contains(currentSymbol))
+            if (Char.IsDigit(currentSymbol))
             {
-                CurrentState = State.DecimalNumber;
-                return;
+                var decimalNumber = "" + currentSymbol;
+                if (!reader.EndOfStream)
+                {
+                    char character = (char)reader.Read();
+                    if (Char.IsDigit(character))
+                    {
+                        if (Language.Digits.Contains(character))
+                            decimalNumber += character;
+                        else
+                            throw new InvalidDataException($"Symbol '{character}' is not allowed!");
+                    }
+                    else
+                    {
+                        return new Tuple<State, string>(State.DecimalNumber, decimalNumber);
+                    }
+
+                }
+            }
+
+            if (currentSymbol.Equals(':'))
+            {
+                var complexDelimiter = "" + currentSymbol;
+                if (!reader.EndOfStream)
+                {
+                    char character = (char)reader.Read();
+                    if (character.Equals('>'))
+                    {
+                        complexDelimiter += character;
+                        return new Tuple<State, string>(State.DoubleDelimiter, complexDelimiter);
+                    }
+                    else
+                    {
+                        if(Char.IsLetter(character) || Char.IsDigit(character))
+                        {
+                            return new Tuple<State, string>(State.Delimiter, complexDelimiter);
+                        }
+                        else
+                        {
+                            throw new InvalidDataException($"Symbol '{character}' is not allowed after {complexDelimiter}!");
+                        }
+                    }
+                }
             }
 
             if (Language.Delimiters.Contains(currentSymbol))
             {
                 CurrentState = State.Delimiter;
-                return;
+                return new Tuple<State, string>(State.Delimiter, "" + currentSymbol);
             }
 
             if (currentSymbol.Equals('\''))
             {
                 CurrentState = State.String;
+
+                return new Tuple<State, string>();
+            }
+
+            if (Char.IsWhiteSpace(currentSymbol))
+            {
+                LexemEnded = true;
                 return;
             }
 
-            if (Language.ComplexDelimiters.Contains(currentSymbol))
-            {
-                CurrentState = State.DoubleDelimiter;
-                return;
-            }
-
-            if (currentSymbol.Equals(' ') || currentSymbol.Equals('\t') || currentSymbol.Equals('\n'))
-            {
-                CurrentState = State.Space;
-                return;
-            }
             CurrentState = State.Error;
             Logger.Error($"Symbol: {currentSymbol} is invalid for this language definition");
         }
 
-
+        private void DetectLexem(string lexem, ParsingResult result)
+        {
+            switch (PreviousState)
+            {
+                case State.Identifier:
+                    {
+                        if (Language.Keywords.Any(x => String.Compare(x, lexem, true) == 0))
+                        {
+                            if (!result.Keywords.Contains(lexem))
+                                result.Keywords.Add(lexem);
+                        }
+                        else
+                        {
+                            if (!result.Identifiers.Contains(lexem))
+                                result.Identifiers.Add(lexem);
+                        }
+                        break;
+                    }
+                case State.DecimalNumber:
+                    {
+                        if (!result.DecimalNumbers.Contains(lexem))
+                            result.DecimalNumbers.Add(lexem);
+                        break;
+                    }
+                case State.Delimiter:
+                    {
+                        if (!result.Delimiters.Contains(lexem))
+                            result.Delimiters.Add(lexem);
+                        break;
+                    }
+            }
+            LexemEnded = false;
+        }
 
         private State CheckState()
         {
