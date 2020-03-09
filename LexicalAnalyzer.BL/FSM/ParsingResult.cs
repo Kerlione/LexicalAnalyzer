@@ -12,6 +12,7 @@ namespace LexicalAnalyzer.BL.FSM
         public List<string> Identifiers { get; set; }
         public List<string> DecimalNumbers { get; set; }
         public List<string> Delimiters { get; set; }
+        public List<string> Strings { get; set; }
         public List<DecompositionTableEntry> CommonSymbolTable { get; set; }
         public ParsingResult()
         {
@@ -19,27 +20,78 @@ namespace LexicalAnalyzer.BL.FSM
             Identifiers = new List<string>();
             DecimalNumbers = new List<string>();
             Delimiters = new List<string>();
+            Strings = new List<string>();
             CommonSymbolTable = new List<DecompositionTableEntry>();
         }
-        public void AddLexemLog(State state, string value)
+        public void AddLexemLog(Tuple<State, string> value)
         {
             int position = 0;
-            switch (state)
+            switch (value.Item1)
             {
-                case(State.Identifier):
+                case (State.Identifier):
                     {
-                        position = Identifiers.IndexOf(value);
+                        position = Identifiers.IndexOf(value.Item2);
+                        if(position == -1)
+                        {
+                            Identifiers.Add(value.Item2);
+                        }
+                        break;
+                    }
+                case (State.Keyword):
+                    {
+                        position = Keywords.IndexOf(value.Item2);
+                        if (position == -1)
+                        {
+                            Keywords.Add(value.Item2);
+                        }
+                        break;
+                    }
+                case (State.DecimalNumber):
+                    {
+                        position = DecimalNumbers.IndexOf(value.Item2);
+                        if (position == -1)
+                        {
+                            DecimalNumbers.Add(value.Item2);
+                        }
+                        break;
+                    }
+                case (State.Delimiter):
+                    {
+                        position = Delimiters.IndexOf(value.Item2);
+                        if (position == -1)
+                        {
+                            Delimiters.Add(value.Item2);
+                        }
+                        break;
+                    }
+                case (State.DoubleDelimiter):
+                    {
+                        position = Delimiters.IndexOf(value.Item2);
+                        if (position == -1)
+                        {
+                            Delimiters.Add(value.Item2);
+                        }
+                        break;
+                    }
+                case (State.String):
+                    {
+                        position = Strings.IndexOf(value.Item2);
+                        if(position == -1)
+                        {
+                            Strings.Add(value.Item2);
+                        }
                         break;
                     }
                 default:
                     {
-                        throw new Exception($"{value} Not found");
+                        Console.WriteLine($"{value} Not found");
+                        break;
                     }
             }
             var entry = new DecompositionTableEntry
             {
-                Table = state,
-                Lexem = value,
+                Table = value.Item1,
+                Lexem = value.Item2,
                 Position = position
             };
             CommonSymbolTable.Add(entry);

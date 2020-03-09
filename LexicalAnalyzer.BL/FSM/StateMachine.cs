@@ -63,7 +63,18 @@ namespace LexicalAnalyzer.BL.FSM
                     while (!reader.EndOfStream)
                     {
                         char currentSymbol = (char)reader.Read();
-                        var res = Process(currentSymbol, reader);                        
+                        if (!Char.IsWhiteSpace(currentSymbol))
+                        {
+                            var processingResult = Process(currentSymbol, reader);
+                            if (processingResult.Item1.Equals(State.Error))
+                            {
+                                Console.WriteLine($"Unsupported character '{currentSymbol}' detected at position {file.Position}");
+                                throw new Exception($"Unsupported character '{currentSymbol}' detected at position {file.Position}");
+                            }
+                            else{
+                                result.AddLexemLog(processingResult);
+                            }
+                        }                
                     }
                 }
                 return result;
@@ -80,18 +91,20 @@ namespace LexicalAnalyzer.BL.FSM
                 var identifier = "" + currentSymbol;
                 if (!reader.EndOfStream)
                 {
-                    char character = (char)reader.Read();
+                    char character = (char)reader.Peek();
                     while (Char.IsLetter(character) || Char.IsDigit(character))
                     {
+                        character = (char)reader.Read();
                         if (Language.AllowedSymbols.Contains(character))
                         {
                             identifier += character;
-                            character = (char)reader.Read();
+                            character = (char)reader.Peek();
                         }
                         else
                             throw new InvalidDataException($"Symbol '{character}' is not allowed!");
-                    }                    
-                    return new Tuple<State, string>(State.Identifier, identifier);
+                    }
+                    var actualLexemType = Language.Keywords.Contains(identifier) ? State.Keyword : State.Identifier; 
+                    return new Tuple<State, string>(actualLexemType, identifier);
                 }
             }
 
@@ -100,11 +113,15 @@ namespace LexicalAnalyzer.BL.FSM
                 var decimalNumber = "" + currentSymbol;
                 if (!reader.EndOfStream)
                 {
-                    char character = (char)reader.Read();
+                    char character = (char)reader.Peek();
                     while (Char.IsDigit(character))
                     {
+                        reader.Read();
                         if (Language.Digits.Contains(character))
+                        {
                             decimalNumber += character;
+                            character = (char)reader.Peek();
+                        }
                         else
                             throw new InvalidDataException($"Symbol '{character}' is not allowed!");
                     }
@@ -117,15 +134,16 @@ namespace LexicalAnalyzer.BL.FSM
                 var complexDelimiter = "" + currentSymbol;
                 if (!reader.EndOfStream)
                 {
-                    char character = (char)reader.Read();
-                    if (character.Equals('>'))
+                    char character = (char)reader.Peek();
+                    if (character.Equals('='))
                     {
+                        reader.Read();
                         complexDelimiter += character;
                         return new Tuple<State, string>(State.DoubleDelimiter, complexDelimiter);
                     }
                     else
                     {
-                        if(Char.IsLetter(character) || Char.IsDigit(character))
+                        if(Char.IsLetter(character) || Char.IsDigit(character) || Char.IsWhiteSpace(character))
                         {
                             return new Tuple<State, string>(State.Delimiter, complexDelimiter);
                         }
@@ -136,7 +154,31 @@ namespace LexicalAnalyzer.BL.FSM
                     }
                 }
             }
-
+            if (currentSymbol.Equals('<'))
+            {
+                var complexDelimiter = "" + currentSymbol;
+                if (!reader.EndOfStream)
+                {
+                    char character = (char)reader.Peek();
+                    if (character.Equals('>'))
+                    {
+                        reader.Read();
+                        complexDelimiter += character;
+                        return new Tuple<State, string>(State.DoubleDelimiter, complexDelimiter);
+                    }
+                    else
+                    {
+                        if (Char.IsLetter(character) || Char.IsDigit(character) || Char.IsWhiteSpace(character))
+                        {
+                            return new Tuple<State, string>(State.Delimiter, complexDelimiter);
+                        }
+                        else
+                        {
+                            throw new InvalidDataException($"Symbol '{character}' is not allowed after {complexDelimiter}!");
+                        }
+                    }
+                }
+            }
             if (Language.Delimiters.Contains(currentSymbol))
             {
                 CurrentState = State.Delimiter;
@@ -153,10 +195,14 @@ namespace LexicalAnalyzer.BL.FSM
                     while (!character.Equals('\''))
                     {
                         data += character;
-                       
+                        character = (char)reader.Read();
                     }
                     return new Tuple<State, string>(State.String, data);
                 }
+            }
+            if (Char.IsWhiteSpace(currentSymbol))
+            {
+                return new Tuple<State, string>(State.Space, "" + currentSymbol);
             }
             return new Tuple<State, string>(State.Error, "" + currentSymbol);
         }
