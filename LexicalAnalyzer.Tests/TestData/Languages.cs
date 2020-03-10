@@ -41,9 +41,10 @@ namespace LexicalAnalyzer.Tests.TestData
             {
                 '0','1','2','3','4','5','6','7','8','9'
             },
-            ComplexDelimiters = new List<char>
+            ComplexDelimiters = new List<string>
             {
-                '='
+                ":=",
+                "<>"
             }
         };
     }

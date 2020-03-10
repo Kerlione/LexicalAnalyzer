@@ -21,14 +21,14 @@ namespace LexicalAnalyzer.BL
 
         public List<char> Digits { get; set; }
 
-        public List<char> ComplexDelimiters { get; set; }
+        public List<string> ComplexDelimiters { get; set; }
 
         public Language()
         {
 
         }
 
-        public Language(List<char> allowedSymbols, List<string> keywords, List<char> delimiters, List<char> complexDelimiters)
+        public Language(List<char> allowedSymbols, List<string> keywords, List<char> delimiters, List<string> complexDelimiters)
         {
             AllowedSymbols = allowedSymbols;
             Keywords = keywords;

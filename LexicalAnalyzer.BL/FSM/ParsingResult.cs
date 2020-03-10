@@ -34,6 +34,7 @@ namespace LexicalAnalyzer.BL.FSM
                         if(position == -1)
                         {
                             Identifiers.Add(value.Item2);
+                            position = Identifiers.IndexOf(value.Item2);
                         }
                         break;
                     }
@@ -43,6 +44,7 @@ namespace LexicalAnalyzer.BL.FSM
                         if (position == -1)
                         {
                             Keywords.Add(value.Item2);
+                            position = Keywords.IndexOf(value.Item2);
                         }
                         break;
                     }
@@ -52,6 +54,7 @@ namespace LexicalAnalyzer.BL.FSM
                         if (position == -1)
                         {
                             DecimalNumbers.Add(value.Item2);
+                            position = DecimalNumbers.IndexOf(value.Item2);
                         }
                         break;
                     }
@@ -61,6 +64,7 @@ namespace LexicalAnalyzer.BL.FSM
                         if (position == -1)
                         {
                             Delimiters.Add(value.Item2);
+                            position = Delimiters.IndexOf(value.Item2);
                         }
                         break;
                     }
@@ -70,6 +74,7 @@ namespace LexicalAnalyzer.BL.FSM
                         if (position == -1)
                         {
                             Delimiters.Add(value.Item2);
+                            position = Delimiters.IndexOf(value.Item2);
                         }
                         break;
                     }
@@ -79,6 +84,7 @@ namespace LexicalAnalyzer.BL.FSM
                         if(position == -1)
                         {
                             Strings.Add(value.Item2);
+                            position = Strings.IndexOf(value.Item2);
                         }
                         break;
                     }

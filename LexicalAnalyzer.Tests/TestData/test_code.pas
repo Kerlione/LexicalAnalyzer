@@ -1,4 +1,4 @@
-@procedure SetDisplay(R: Real);
+procedure sssssSetDisplay(R: Real);
 var S: string[63];
 begin
     Str(R: 0: 10, S);

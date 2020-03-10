@@ -68,8 +68,8 @@ namespace LexicalAnalyzer.BL.FSM
                             var processingResult = Process(currentSymbol, reader);
                             if (processingResult.Item1.Equals(State.Error))
                             {
-                                Console.WriteLine($"Unsupported character '{currentSymbol}' detected at position {file.Position}");
-                                throw new Exception($"Unsupported character '{currentSymbol}' detected at position {file.Position}");
+                                Console.WriteLine($"Unsupported character '{currentSymbol}' detected after {lexemBuffer}.");
+                                throw new Exception($"Unsupported character '{currentSymbol}' detected after {result.CommonSymbolTable.LastOrDefault()?.Lexem}.");
                             }
                             else{
                                 result.AddLexemLog(processingResult);
@@ -188,7 +188,7 @@ namespace LexicalAnalyzer.BL.FSM
             if (currentSymbol.Equals('\''))
             {
                 CurrentState = State.String;
-                var data = "";
+                var data = "\'";
                 if (!reader.EndOfStream)
                 {
                     char character = (char)reader.Read();
@@ -197,6 +197,7 @@ namespace LexicalAnalyzer.BL.FSM
                         data += character;
                         character = (char)reader.Read();
                     }
+                    data += "\'";
                     return new Tuple<State, string>(State.String, data);
                 }
             }

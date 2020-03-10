@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LexicalAnalyzer"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
@@ -11,8 +10,115 @@
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <GridSplitter Grid.Column="0">
-            
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBox x:Name="testFragment" Grid.Column="0" Grid.Row="0"/>
+        
+        <ListView Name="parsingResult" Grid.Row="1" Grid.Column="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Table}" Width="100">Table</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Position}" Width="50">Position</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Lexem}" Width="200">Lexem</GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <GroupBox Grid.Column="1" Grid.Row="0" Header="Analysis Results">
+            <GroupItem>
+                <TabControl>
+                    <TabItem Header="Keywords">
+                        <ListView Name="keywords">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="100">Value</GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                    <TabItem Header="Identifiers">
+                        <ListView Name="identifiers">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="100">Value</GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                    <TabItem Header="Delimiters">
+                        <ListView Name="delimiters">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="100">Value</GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                    <TabItem Header="Decimal Numbers">
+                        <ListView Name="decimalNumbers">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="100">Value</GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                    <TabItem Header="String Constants">
+                        <ListView Name="stringConstants">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="100">Value</GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                </TabControl>
+            </GroupItem>
+        </GroupBox>
+        <GroupBox Grid.Column="0" Grid.Row="1" Header="Language Definition">
+            <GroupItem>
+                <TabControl>
+                    <TabItem Header="Keywords">
+                        <ListView Name="languageKeywords">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="100">Value</GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                    <TabItem Header="Delimiters">
+                        <ListView Name="languageDelimiters">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="100">Value</GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                    <TabItem Header="Double Delimiters">
+                        <ListView Name="languageDoubleDelimiters">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="100">Value</GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                    <TabItem Header="Allowed Symbols">
+                        <ListView Name="languageSymbols">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="100">Value</GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                </TabControl>
+            </GroupItem>
+        </GroupBox>
+        <GridSplitter Grid.Column="0">            
         </GridSplitter>
     </Grid>
 </Window>
