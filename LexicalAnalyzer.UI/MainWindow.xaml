@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="600" Width="800"
+        ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -14,22 +15,26 @@
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBox x:Name="testFragment" Grid.Column="0" Grid.Row="0"/>
-        
-        <ListView Name="parsingResult" Grid.Row="1" Grid.Column="1">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Table}" Width="100">Table</GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Position}" Width="50">Position</GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Lexem}" Width="200">Lexem</GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <StackPanel Grid.Row="0" Grid.Column="0" >
+            <TextBox x:Name="testFragment" AcceptsReturn="True" Height="250" Grid.Row="1"/>
+            <Button Click="Button_Click" Width="Auto" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="7" Grid.Row="2">Re-parse</Button>
+        </StackPanel>
+        <GroupBox Grid.Column="1" Grid.Row="1" Header="Common Symbol Table">
+            <ListView Name="parsingResult">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=Table}" Width="100">Table</GridViewColumn>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=Position}" Width="50">Position</GridViewColumn>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=Lexem}" Width="200">Lexem</GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </GroupBox>
         <GroupBox Grid.Column="1" Grid.Row="0" Header="Analysis Results">
             <GroupItem>
-                <TabControl>
+                <TabControl Height="250">
                     <TabItem Header="Keywords">
-                        <ListView Name="keywords">
+                        <ListView Name="keywords" ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Width="100">Value</GridViewColumn>
@@ -78,7 +83,7 @@
         </GroupBox>
         <GroupBox Grid.Column="0" Grid.Row="1" Header="Language Definition">
             <GroupItem>
-                <TabControl>
+                <TabControl Height="250">
                     <TabItem Header="Keywords">
                         <ListView Name="languageKeywords">
                             <ListView.View>
@@ -89,7 +94,7 @@
                         </ListView>
                     </TabItem>
                     <TabItem Header="Delimiters">
-                        <ListView Name="languageDelimiters">
+                        <ListView Name="languageDelimiters" Height="200">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Width="100">Value</GridViewColumn>
@@ -98,7 +103,7 @@
                         </ListView>
                     </TabItem>
                     <TabItem Header="Double Delimiters">
-                        <ListView Name="languageDoubleDelimiters">
+                        <ListView Name="languageDoubleDelimiters" Height="200">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Width="100">Value</GridViewColumn>
@@ -106,8 +111,8 @@
                             </ListView.View>
                         </ListView>
                     </TabItem>
-                    <TabItem Header="Allowed Symbols">
-                        <ListView Name="languageSymbols">
+                    <TabItem Header="Allowed Symbols" >
+                        <ListView Name="languageSymbols" Height="200">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Width="100">Value</GridViewColumn>
@@ -118,7 +123,5 @@
                 </TabControl>
             </GroupItem>
         </GroupBox>
-        <GridSplitter Grid.Column="0">            
-        </GridSplitter>
     </Grid>
 </Window>

@@ -68,8 +68,7 @@ namespace LexicalAnalyzer.BL.FSM
                             var processingResult = Process(currentSymbol, reader);
                             if (processingResult.Item1.Equals(State.Error))
                             {
-                                Console.WriteLine($"Unsupported character '{currentSymbol}' detected after {lexemBuffer}.");
-                                throw new Exception($"Unsupported character '{currentSymbol}' detected after {result.CommonSymbolTable.LastOrDefault()?.Lexem}.");
+                                throw new Exception($"Unsupported character '{currentSymbol}' detected after '{result.CommonSymbolTable.LastOrDefault()?.Lexem}'.");
                             }
                             else{
                                 result.AddLexemLog(processingResult);
@@ -101,7 +100,7 @@ namespace LexicalAnalyzer.BL.FSM
                             character = (char)reader.Peek();
                         }
                         else
-                            throw new InvalidDataException($"Symbol '{character}' is not allowed!");
+                            return new Tuple<State, string>(State.Error, "" + character);
                     }
                     var actualLexemType = Language.Keywords.Contains(identifier) ? State.Keyword : State.Identifier; 
                     return new Tuple<State, string>(actualLexemType, identifier);
@@ -123,7 +122,7 @@ namespace LexicalAnalyzer.BL.FSM
                             character = (char)reader.Peek();
                         }
                         else
-                            throw new InvalidDataException($"Symbol '{character}' is not allowed!");
+                            return new Tuple<State, string>(State.Error, "" + character);
                     }
                     return new Tuple<State, string>(State.DecimalNumber, decimalNumber);
                 }
@@ -149,7 +148,7 @@ namespace LexicalAnalyzer.BL.FSM
                         }
                         else
                         {
-                            throw new InvalidDataException($"Symbol '{character}' is not allowed after {complexDelimiter}!");
+                            return new Tuple<State, string>(State.Error, "" + complexDelimiter);
                         }
                     }
                 }
@@ -174,7 +173,7 @@ namespace LexicalAnalyzer.BL.FSM
                         }
                         else
                         {
-                            throw new InvalidDataException($"Symbol '{character}' is not allowed after {complexDelimiter}!");
+                            return new Tuple<State, string>(State.Error, "" + complexDelimiter);
                         }
                     }
                 }
@@ -188,7 +187,7 @@ namespace LexicalAnalyzer.BL.FSM
             if (currentSymbol.Equals('\''))
             {
                 CurrentState = State.String;
-                var data = "\'";
+                var data = String.Empty;
                 if (!reader.EndOfStream)
                 {
                     char character = (char)reader.Read();
@@ -197,7 +196,6 @@ namespace LexicalAnalyzer.BL.FSM
                         data += character;
                         character = (char)reader.Read();
                     }
-                    data += "\'";
                     return new Tuple<State, string>(State.String, data);
                 }
             }
