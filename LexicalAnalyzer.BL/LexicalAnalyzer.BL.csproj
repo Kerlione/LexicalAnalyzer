@@ -57,6 +57,7 @@
     <Compile Include="Language\Language.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FSM\State.cs" />
+    <Compile Include="Syntax\SyntaxValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -102,5 +102,24 @@ namespace LexicalAnalyzer.BL.FSM
             };
             CommonSymbolTable.Add(entry);
         }
+        private int _currentElementId = 0;
+        public DecompositionTableEntry Next()
+        {
+            if (_currentElementId < CommonSymbolTable.Count)
+            {
+                var returnedEntry = CommonSymbolTable[_currentElementId];
+                _currentElementId += 1;
+                return returnedEntry;
+            }
+            else
+            {
+                return new DecompositionTableEntry
+                {
+                    Table = State.Space,
+                    Lexem = "\0",
+                    Position = 0
+                };
+            }
+        }
     }
 }

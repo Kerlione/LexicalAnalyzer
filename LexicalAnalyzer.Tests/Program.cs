@@ -1,5 +1,6 @@
 ﻿using LexicalAnalyzer.BL;
 using LexicalAnalyzer.BL.FSM;
+using LexicalAnalyzer.BL.Syntax;
 using LexicalAnalyzer.Tests.TestData;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace LexicalAnalyzer.Tests
             var file = @"TestData\test_code.pas";
             var fsm = new StateMachine(filePath);
             var result = fsm.Process(file);
+            var validator = new SyntaxValidator(result);
+            validator.CheckStatement();
             Console.ReadLine();
         }
     }

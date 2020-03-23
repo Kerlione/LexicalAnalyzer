@@ -57,6 +57,7 @@
   <ItemGroup>
     <Content Include="TestData\AnalyzedCode.txt" />
     <Content Include="TestData\Grammar.txt" />
+    <Content Include="TestData\Syntax.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TestData\LexicalAnalyzer_FSM.drawio" />

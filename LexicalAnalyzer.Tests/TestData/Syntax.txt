@@ -1,0 +1,23 @@
+﻿<statement> ::= if <expression> then <statement> | <expression>
+<expression> ::= <expression> > <expression> | <terminal> {+ <terminal>} 
+<terminal> ::= identifier [(expression)]
+
+if
+    Length(S) > 15 + 1 + 10 => <expression> > <expression>
+        Length(S) => expression
+            Length => identifier [(expression)]
+            (
+                S => expression
+                    S => terminal
+                        S => identifier
+            ) => terminal
+        15 + 1 + 10 => expression
+            15 + 1 + 10 => terminal + terminal + terminal
+                15 => terminal
+                1 => terminal
+                10 => terminal
+then
+    Error => statement
+        Error => expression
+            Error => terminal
+                Error => identifier

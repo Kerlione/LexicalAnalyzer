@@ -102,9 +102,9 @@ namespace LexicalAnalyzer.BL.FSM
                         else
                             return new Tuple<State, string>(State.Error, "" + character);
                     }
-                    var actualLexemType = Language.Keywords.Contains(identifier) ? State.Keyword : State.Identifier; 
-                    return new Tuple<State, string>(actualLexemType, identifier);
                 }
+                var actualLexemType = Language.Keywords.Contains(identifier) ? State.Keyword : State.Identifier;
+                return new Tuple<State, string>(actualLexemType, identifier);
             }
 
             if (Char.IsDigit(currentSymbol))
@@ -124,8 +124,8 @@ namespace LexicalAnalyzer.BL.FSM
                         else
                             return new Tuple<State, string>(State.Error, "" + character);
                     }
-                    return new Tuple<State, string>(State.DecimalNumber, decimalNumber);
                 }
+                return new Tuple<State, string>(State.DecimalNumber, decimalNumber);
             }
 
             if (currentSymbol.Equals(':'))
@@ -191,7 +191,7 @@ namespace LexicalAnalyzer.BL.FSM
                 if (!reader.EndOfStream)
                 {
                     char character = (char)reader.Read();
-                    while (!character.Equals('\''))
+                    while (!character.Equals('\'') && !reader.EndOfStream)
                     {
                         data += character;
                         character = (char)reader.Read();
