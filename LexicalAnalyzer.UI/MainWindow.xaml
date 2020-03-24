@@ -17,7 +17,10 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0" >
             <TextBox x:Name="testFragment" AcceptsReturn="True" Height="250" Grid.Row="1"/>
-            <Button Click="Button_Click" Width="Auto" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="7" Grid.Row="2">Re-parse</Button>
+            <StackPanel Orientation="Horizontal" Grid.Row="2">
+                <Button Click="Button_Click" Width="Auto" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="7" Content="Re-parse"/>
+                <Button Click="SyntaxCheck" Width="Auto" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="7" Content="Syntax"/>
+            </StackPanel>
         </StackPanel>
         <GroupBox Grid.Column="1" Grid.Row="1" Header="Common Symbol Table">
             <ListView Name="parsingResult">

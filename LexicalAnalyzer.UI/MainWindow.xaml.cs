@@ -1,4 +1,5 @@
 ﻿using LexicalAnalyzer.BL.FSM;
+using LexicalAnalyzer.BL.Syntax;
 using LexicalAnalyzer.Tests.TestData;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace LexicalAnalyzer
         private static readonly string _languageDefinitionPath = "pascalDefinition.xml";
         private static readonly string _testCodeFragment = @"TestData\test_code.pas";
         private static StateMachine fsm;
+        private static ParsingResult _parsingResult;
         public MainWindow()
         {
             InitializeComponent();
@@ -71,6 +73,7 @@ namespace LexicalAnalyzer
                 delimiters.ItemsSource = result.Delimiters;
                 decimalNumbers.ItemsSource = result.DecimalNumbers;
                 stringConstants.ItemsSource = result.Strings;
+                _parsingResult = result;
             }
             catch (Exception ex)
             {
@@ -83,6 +86,19 @@ namespace LexicalAnalyzer
             File.WriteAllText(_testCodeFragment, testFragment.Text);
             LoadTestFragment();
             Process();
+        }
+
+        private void SyntaxCheck(object sender, RoutedEventArgs e)
+        {
+            Button_Click(sender, e);
+            var validator = new SyntaxValidator(_parsingResult);
+            try
+            {
+                validator.CheckStatement();
+            }catch(Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Error occured", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

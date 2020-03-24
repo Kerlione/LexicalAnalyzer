@@ -21,3 +21,8 @@ then
         Error => expression
             Error => terminal
                 Error => identifier
+
+
+
+
+Length(S) > 15 + 1 +  then Error 

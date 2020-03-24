@@ -1,9 +1,5 @@
 ﻿using LexicalAnalyzer.BL.FSM;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LexicalAnalyzer.BL.Syntax
 {
@@ -11,6 +7,7 @@ namespace LexicalAnalyzer.BL.Syntax
     {
         private DecompositionTableEntry NS { get; set; }
         private ParsingResult ParsingResult { get; set; }
+        private bool BracketOpened = false;
         public SyntaxValidator(ParsingResult result)
         {
             ParsingResult = result;
@@ -34,7 +31,15 @@ namespace LexicalAnalyzer.BL.Syntax
             }
             else
             {
+                if (NS.Table.Equals(State.Space))
+                {
+                    throw new Exception($"No statement found");
+                }
                 CheckExpression();
+                if (NS.Lexem.Equals("then"))
+                {
+                    throw new Exception($"'then' is found when no IF clause is available");
+                }
             }
             
         }
@@ -48,6 +53,8 @@ namespace LexicalAnalyzer.BL.Syntax
                 while (NS.Lexem.Equals("+"))
                 {
                     Scan();
+                    if(NS.Table.Equals(State.Space))
+                        throw new Exception($"No identifier of decimal number found after '+'");
                     CheckTerminal();
                 }
             }
@@ -61,8 +68,13 @@ namespace LexicalAnalyzer.BL.Syntax
 
         public void CheckTerminal()
         {
+            if (NS.Table.Equals(State.Identifier) || NS.Table.Equals(State.DecimalNumber))
+            {
+                Scan();
+            }
             if (NS.Lexem.Equals("("))
             {
+                BracketOpened = true;
                 Scan();
                 CheckExpression();
                 if (!NS.Lexem.Equals(")"))
@@ -71,13 +83,16 @@ namespace LexicalAnalyzer.BL.Syntax
                 }
                 else
                 {
+                    BracketOpened = false;
                     Scan();
                 }
             }
-            if (NS.Table.Equals(State.Identifier) || NS.Table.Equals(State.Keyword) || NS.Table.Equals(State.DecimalNumber))
+            if (NS.Lexem.Equals(")"))
             {
-                Scan();
-            }            
+                if (!BracketOpened)
+                    throw new Exception($"')' is detected, but no '(' was found before");
+            }
+            
         }
 
         private void CheckParenthesis()
