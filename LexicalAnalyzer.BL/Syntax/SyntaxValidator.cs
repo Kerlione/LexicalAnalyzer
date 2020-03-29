@@ -7,7 +7,7 @@ namespace LexicalAnalyzer.BL.Syntax
     {
         private DecompositionTableEntry NS { get; set; }
         private ParsingResult ParsingResult { get; set; }
-        private bool BracketOpened = false;
+        private int BracketOpened = 0;
         public SyntaxValidator(ParsingResult result)
         {
             ParsingResult = result;
@@ -53,7 +53,9 @@ namespace LexicalAnalyzer.BL.Syntax
                 while (NS.Lexem.Equals("+"))
                 {
                     Scan();
-                    if(NS.Table.Equals(State.Space))
+                    if (NS.Lexem.Equals("+"))
+                        throw new Exception($"Duplicate '+' detected");
+                    if (NS.Table.Equals(State.Space))
                         throw new Exception($"No identifier of decimal number found after '+'");
                     CheckTerminal();
                 }
@@ -61,6 +63,8 @@ namespace LexicalAnalyzer.BL.Syntax
             if (NS.Lexem.Equals(">"))
             {
                 Scan();
+                if(NS.Lexem.Equals(">"))
+                    throw new Exception($"Duplicate '>' detected");
                 CheckExpression();
             }
         }
@@ -74,7 +78,7 @@ namespace LexicalAnalyzer.BL.Syntax
             }
             if (NS.Lexem.Equals("("))
             {
-                BracketOpened = true;
+                BracketOpened += 1;
                 Scan();
                 CheckExpression();
                 if (!NS.Lexem.Equals(")"))
@@ -83,14 +87,14 @@ namespace LexicalAnalyzer.BL.Syntax
                 }
                 else
                 {
-                    BracketOpened = false;
                     Scan();
                 }
             }
             if (NS.Lexem.Equals(")"))
             {
-                if (!BracketOpened)
-                    throw new Exception($"')' is detected, but no '(' was found before");
+                BracketOpened -= 1;
+                if (BracketOpened > 1 || BracketOpened < 0)
+                    throw new Exception($"Found ')' when no '(' was before");
             }
             
         }
